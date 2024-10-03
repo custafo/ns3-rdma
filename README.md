@@ -137,6 +137,7 @@ A análise dos dados do trace fornece uma janela detalhada sobre como os pacotes
 - Os parâmetros configurados, como **QCN**, **PFC**, e **ECMP**, ajudam a manter o desempenho e a integridade da rede, evitando a perda de pacotes e mantendo a latência baixa.
 
 ---
+A SEGUIR: SIMULAÇÃO DO AUTOR DO PROJETO
 _________________________________________________________________________________________
 # NS-3 simulator for RDMA
 This is an NS-3 simulator for RDMA over Converged Ethernet v2 (RoCEv2). It includes the implementation of DCQCN, TIMELY, PFC, ECN and Broadcom shared buffer switch.
