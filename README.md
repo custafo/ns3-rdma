@@ -89,17 +89,17 @@ Vamos agora explorar alguns dos principais parâmetros que foram configurados e 
    - **Importância**: O CNP é enviado quando há congestionamento para alertar os remetentes a reduzirem a taxa de envio, evitando congestionamento.
 
 ### 6. **Visualização dos Dados do Trace**
-Vamos agora interpretar os dados do trace gerado e criar gráficos que ilustram o comportamento da rede.
+O que pode ser feito com os dados do arquivo trace gerado?
 
-#### a. **Gráfico de Throughput ao Longo do Tempo**
+#### a. **Gráfico de Throughput ao Longo do Tempo** ///Fizemos
 - **Descrição**: Usamos os timestamps e o tamanho dos pacotes transmitidos para calcular o throughput ao longo da simulação.
 - **Visualização**: Um gráfico de linha que mostra o throughput variando com o tempo.
   
 #### b. **Distribuição do Tamanho dos Pacotes**
-- **Descrição**: Plotei um gráfico de barras mostrando a distribuição dos tamanhos dos pacotes transmitidos ao longo da simulação.
+- **Descrição**: Plotar um gráfico de barras mostrando a distribuição dos tamanhos dos pacotes transmitidos ao longo da simulação.
   
 #### c. **Latência (se aplicável)**
-- **Descrição**: Calculei a latência subtraindo o tempo de envio do tempo de recebimento dos pacotes, gerando um gráfico que mostra as variações da latência ao longo do tempo.
+- **Descrição**: Calcular a latência subtraindo o tempo de envio do tempo de recebimento dos pacotes, gerando um gráfico que mostra as variações da latência ao longo do tempo.
 
 ### 7. **Resultados**
 Ao comparar os dois arquivos **trace** gerados por diferentes execuções da simulação:
