@@ -30,6 +30,36 @@ Ao final da simulação, foi gerado um arquivo **trace** contendo os eventos da 
 - Tamanho dos pacotes
 - Informações de origem e destino dos pacotes
 
+### Análise Detalhada
+
+#### 1. **Timestamp (2.000002, 2.000003, 2.000004)**
+   - **O que representa**: Esta é a primeira coluna e mostra o momento exato em que o evento registrado ocorreu, medido em segundos. O timestamp é crucial para entender quando exatamente ocorreu a transmissão de um pacote na simulação.
+   - **Exemplo específico**: O primeiro número `2.000002` significa que o evento ocorreu precisamente 2.000002 segundos após o início da simulação.
+
+#### 2. **Origem > Destino (/1 1.2>1.1, /1 1.3>1.1, /1 1.2>1.1)**
+   - **O que representa**: A segunda coluna indica a identificação dos nós de origem e destino dos pacotes. O formato `x.y>x.z` indica que o nó com ID `x.y` enviou um pacote para o nó com ID `x.z`.
+   - **Exemplo específico**: Em `/1 1.2>1.1`, o nó `1.2` enviou um pacote para o nó `1.1`. Isso pode representar, por exemplo, um servidor (1.2) enviando dados para um cliente (1.1) ou vice-versa, dependendo da configuração da rede simulada.
+
+#### 3. **Protocolo (u)**
+   - **O que representa**: A terceira coluna, embora breve aqui com um `u`, geralmente indica o protocolo utilizado na transmissão do pacote. `u` poderia representar UDP, um protocolo comum em simulações que não necessitam de confirmação de recebimento (acknowledgment) dos pacotes.
+   - **Exemplo específico**: `u` indica que os pacotes são enviados usando o protocolo UDP.
+
+#### 4. **Tamanho do Pacote (37686, 1740, 9863)**
+   - **O que representa**: A quarta coluna mostra o tamanho do pacote enviado, medido em bytes. Este é um dado crucial para análise de desempenho de rede, como throughput e carga na rede.
+   - **Exemplo específico**: No primeiro caso, `37686` bytes foram enviados do nó 1.2 para o nó 1.1. Isso pode indicar uma transmissão de dados volumosa, como o envio de um arquivo ou um pacote de dados significativo.
+
+#### 5. **Sequência e Controle (0 3, 0 3, 1 3)**
+   - **O que representa**: As últimas colunas podem representar informações adicionais como identificador de sequência e possivelmente flags de controle ou indicadores de fragmentação. 
+   - **Exemplo específico**: `0 3` e `1 3` poderiam indicar o número sequencial do pacote e um código de controle ou status, respectivamente.
+
+### Utilidade dessas Informações
+
+As informações contidas em cada linha do arquivo trace permitem aos engenheiros e pesquisadores:
+- **Analisar o fluxo de tráfego** entre diferentes nós na rede.
+- **Avaliar o desempenho da rede** em termos de throughput, latência e capacidade de carga.
+- **Detectar padrões ou problemas** como perda de pacotes, jitter e outras questões de qualidade de serviço (QoS).
+- **Simular e ajustar** configurações de rede para otimizar o desempenho e a eficiência.
+
 **Métricas Chave** a serem analisadas:
 - **Throughput**: Quantidade de dados transmitidos ao longo do tempo.
 - **Latência**: Tempo necessário para os pacotes viajarem do remetente ao receptor.
@@ -79,16 +109,34 @@ Ao comparar os dois arquivos **trace** gerados por diferentes execuções da sim
 ### 8. **Impacto dos Parâmetros no Desempenho**
 - **QCN**: O controle de congestionamento via QCN reduziu as perdas de pacotes e evitou que o congestionamento aumentasse.
 - **PFC Dinâmico**: O uso de PFC dinâmico ajudou a pausar a transmissão de pacotes quando os buffers estavam cheios, o que reduziu significativamente as perdas de pacotes.
-  
-### 9. **Conclusão**
+
+### 1. **Alta Frequência de Transmissões**
+Os dados mostram uma alta frequência de transmissões entre os nós em um intervalo de tempo extremamente curto (muitos eventos registrados no mesmo segundo, indicado por timestamps como 2.000018, 2.000019, etc.). Isso indica que a rede está processando uma quantidade significativa de dados em uma velocidade muito alta, característica do RoCEv2 que aproveita a eficiência do RDMA para transferências de alta velocidade.
+
+### 2. **Consistência no Tamanho dos Pacotes**
+Há uma clara consistência nos tamanhos dos pacotes entre dois tipos específicos de transmissões:
+   - Nó 1.2 para o nó 1.1: 37686 bytes
+   - Nó 1.3 para o nó 1.1: 1740 bytes
+
+Essa consistência no tamanho dos pacotes pode ser um indicativo de que há um padrão de transferência de dados, onde pacotes maiores podem estar transportando dados principais e pacotes menores podem estar carregando sinais de controle ou informações de manutenção da conexão. No contexto do RoCEv2, isso sugere uma eficiência na separação do tráfego de dados de controle do tráfego de dados principal, permitindo otimizações baseadas em prioridade e tipo de tráfego.
+
+### 3. **Utilização Eficiente de Priorização de Pacotes**
+Se RoCEv2 está configurado para usar o controle de congestionamento ou priorização de pacotes, o tamanho consistente e a frequência dos pacotes podem refletir uma configuração otimizada para garantir que os pacotes mais importantes (dados principais) sejam transmitidos de forma eficaz, mesmo sob cargas pesadas, indicado pelos pacotes de 37686 bytes que são consistentemente enviados entre os nós.
+
+### 4. **Possíveis Indicações de Mecanismos de Controle de Fluxo**
+A regularidade e a rápida sequência dos timestamps podem também sugerir que os mecanismos de controle de fluxo, como Priority Flow Control (PFC) e Explicit Congestion Notification (ECN), estão ativos para evitar a perda de pacotes. Esses mecanismos são críticos em ambientes RoCEv2 para manter a integridade dos dados e a eficiência da rede, especialmente quando há uma transmissão intensiva como indicado.
+
+### 5. **Potencial de Otimização e Ajuste**
+Os dados podem ser utilizados para revisar e possivelmente ajustar a configuração da rede. Por exemplo, se encontrarmos momentos onde o desempenho parece decair (não claramente indicado aqui, mas possível em uma análise mais aprofundada), poderíamos ajustar os parâmetros RoCEv2 para balancear melhor a carga, ajustar o tamanho do pacote, ou refinar os limiares de ECN e PFC.
+
+### Conclusão
+
+A análise dos dados do trace fornece uma janela detalhada sobre como os pacotes são gerenciados e transmitidos em uma simulação RoCEv2, destacando a eficácia do RDMA e dos mecanismos associados do RoCEv2 em manter altas taxas de transferência e baixa latência. Essas informações são fundamentais para validar a implementação do RoCEv2, entender seu comportamento em condições operacionais variadas e guiar otimizações futuras para melhorar o desempenho da rede.
+
 - **RoCEv2** se mostrou eficiente na gestão de congestionamento em redes de data centers, especialmente em situações de tráfego intenso como o **Incast**.
 - Os parâmetros configurados, como **QCN**, **PFC**, e **ECMP**, ajudam a manter o desempenho e a integridade da rede, evitando a perda de pacotes e mantendo a latência baixa.
 
 ---
-
-Com essas modificações, o roteiro agora faz uma conexão mais clara entre os parâmetros configurados, os resultados da simulação e os gráficos gerados. Isso tornará sua apresentação mais interativa e compreensível, destacando os impactos reais das configurações na simulação de RoCEv2.
-
-
 _________________________________________________________________________________________
 # NS-3 simulator for RDMA
 This is an NS-3 simulator for RDMA over Converged Ethernet v2 (RoCEv2). It includes the implementation of DCQCN, TIMELY, PFC, ECN and Broadcom shared buffer switch.
