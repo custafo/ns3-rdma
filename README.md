@@ -101,32 +101,32 @@ Vamos agora interpretar os dados do trace gerado e criar gráficos que ilustram 
 #### c. **Latência (se aplicável)**
 - **Descrição**: Calculei a latência subtraindo o tempo de envio do tempo de recebimento dos pacotes, gerando um gráfico que mostra as variações da latência ao longo do tempo.
 
-### 7. **Comparação dos Resultados**
+### 7. **Resultados**
 Ao comparar os dois arquivos **trace** gerados por diferentes execuções da simulação:
 - **Diferença de Tamanho dos Pacotes**: Na primeira simulação, os pacotes de **1.2 > 1.1** têm tamanho maior (37686 bytes), enquanto na segunda são menores (9863 bytes).
 - **Simetria de Fluxo**: Em ambos os casos, o fluxo é simétrico, com dois nós remetendo pacotes para um único destino, o que cria o cenário de **Incast**.
 
-### 8. **Impacto dos Parâmetros no Desempenho**
+**Impacto dos Parâmetros no Desempenho**
 - **QCN**: O controle de congestionamento via QCN reduziu as perdas de pacotes e evitou que o congestionamento aumentasse.
 - **PFC Dinâmico**: O uso de PFC dinâmico ajudou a pausar a transmissão de pacotes quando os buffers estavam cheios, o que reduziu significativamente as perdas de pacotes.
 
-### 1. **Alta Frequência de Transmissões**
+**Alta Frequência de Transmissões**
 Os dados mostram uma alta frequência de transmissões entre os nós em um intervalo de tempo extremamente curto (muitos eventos registrados no mesmo segundo, indicado por timestamps como 2.000018, 2.000019, etc.). Isso indica que a rede está processando uma quantidade significativa de dados em uma velocidade muito alta, característica do RoCEv2 que aproveita a eficiência do RDMA para transferências de alta velocidade.
 
-### 2. **Consistência no Tamanho dos Pacotes**
+**Consistência no Tamanho dos Pacotes**
 Há uma clara consistência nos tamanhos dos pacotes entre dois tipos específicos de transmissões:
    - Nó 1.2 para o nó 1.1: 37686 bytes
    - Nó 1.3 para o nó 1.1: 1740 bytes
 
 Essa consistência no tamanho dos pacotes pode ser um indicativo de que há um padrão de transferência de dados, onde pacotes maiores podem estar transportando dados principais e pacotes menores podem estar carregando sinais de controle ou informações de manutenção da conexão. No contexto do RoCEv2, isso sugere uma eficiência na separação do tráfego de dados de controle do tráfego de dados principal, permitindo otimizações baseadas em prioridade e tipo de tráfego.
 
-### 3. **Utilização Eficiente de Priorização de Pacotes**
+**Utilização Eficiente de Priorização de Pacotes**
 Se RoCEv2 está configurado para usar o controle de congestionamento ou priorização de pacotes, o tamanho consistente e a frequência dos pacotes podem refletir uma configuração otimizada para garantir que os pacotes mais importantes (dados principais) sejam transmitidos de forma eficaz, mesmo sob cargas pesadas, indicado pelos pacotes de 37686 bytes que são consistentemente enviados entre os nós.
 
-### 4. **Possíveis Indicações de Mecanismos de Controle de Fluxo**
+**Possíveis Indicações de Mecanismos de Controle de Fluxo**
 A regularidade e a rápida sequência dos timestamps podem também sugerir que os mecanismos de controle de fluxo, como Priority Flow Control (PFC) e Explicit Congestion Notification (ECN), estão ativos para evitar a perda de pacotes. Esses mecanismos são críticos em ambientes RoCEv2 para manter a integridade dos dados e a eficiência da rede, especialmente quando há uma transmissão intensiva como indicado.
 
-### 5. **Potencial de Otimização e Ajuste**
+**Potencial de Otimização e Ajuste**
 Os dados podem ser utilizados para revisar e possivelmente ajustar a configuração da rede. Por exemplo, se encontrarmos momentos onde o desempenho parece decair (não claramente indicado aqui, mas possível em uma análise mais aprofundada), poderíamos ajustar os parâmetros RoCEv2 para balancear melhor a carga, ajustar o tamanho do pacote, ou refinar os limiares de ECN e PFC.
 
 ### Conclusão
